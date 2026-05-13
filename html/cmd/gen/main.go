@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
+	"gen/lib/imports"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/marcbran/jpoet/pkg/jpoet"
 )
 
 func main() {
@@ -17,16 +19,15 @@ func main() {
 	}
 }
 
-func run(dir string) error {
-	elem, err := pullElements()
+func run(outDir string) error {
+	elements, err := pullElements()
 	if err != nil {
 		return err
 	}
-	err = writeJson(elem, dir)
+	err = generate(elements, outDir)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -64,21 +65,24 @@ func pullElements() ([]string, error) {
 	return elem, nil
 }
 
-func writeJson(elem []string, dir string) error {
-	err := os.MkdirAll(dir, 0755)
+func generate(elements []string, outDir string) error {
+	elementsJSON, err := json.Marshal(elements)
 	if err != nil {
 		return err
 	}
-	file, err := os.Create(filepath.Join(dir, "elements.json"))
+	err = os.MkdirAll(outDir, 0755)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	b, err := json.MarshalIndent(elem, "", "  ")
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(b)
+	err = jpoet.Eval(
+		jpoet.FileImport([]string{}),
+		jpoet.FSImport(lib),
+		jpoet.FSImport(imports.Fs),
+		jpoet.TLACode("elements", string(elementsJSON)),
+		jpoet.FileInput("./lib/main.libsonnet"),
+		jpoet.Serialize(false),
+		jpoet.DirectoryOutput(outDir),
+	)
 	if err != nil {
 		return err
 	}

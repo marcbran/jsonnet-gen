@@ -60,13 +60,13 @@ local resolveOperand(value) =
   then '(%s)' % value._.expr
   else resolveExpr(value);
 
-local operator(left, operator, right, by, ignoring, group_left, group_right) = {
+local operator(left, operator, right, on, ignoring, group_left, group_right) = {
   _: {
     kind: 'operator',
     left: left,
     operator: operator,
     right: right,
-    by: by,
+    on: on,
     ignoring: ignoring,
     group_left: group_left,
     group_right: group_right,
@@ -78,44 +78,44 @@ local operator(left, operator, right, by, ignoring, group_left, group_right) = {
     },
     expr:
       local leftString = resolveOperand(self.left);
-      local byString = if (std.length(self.by) > 0) then 'by(%s)' % std.join(', ', self.by) else '';
+      local onString = if (std.length(self.on) > 0) then 'on(%s)' % std.join(', ', self.on) else '';
       local ignoringString = if (std.length(self.ignoring) > 0) then 'ignoring(%s)' % std.join(', ', self.ignoring) else '';
       local groupLeftString = if (std.length(self.group_left) > 0) then 'group_left(%s)' % std.join(', ', self.group_left) else '';
       local groupRightString = if (std.length(self.group_right) > 0) then 'group_right(%s)' % std.join(', ', self.group_right) else '';
       local rightString = resolveOperand(self.right);
-      local parts = [leftString, operator, byString, ignoringString, groupLeftString, groupRightString, rightString];
+      local parts = [leftString, operator, onString, ignoringString, groupLeftString, groupRightString, rightString];
       std.join(' ', [part for part in parts if part != '']),
   },
 };
 
 local arithmeticOperators = {
-  add(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '+', right, by, ignoring, group_left, group_right),
-  sub(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '-', right, by, ignoring, group_left, group_right),
-  mul(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '*', right, by, ignoring, group_left, group_right),
-  div(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '/', right, by, ignoring, group_left, group_right),
-  mod(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '%', right, by, ignoring, group_left, group_right),
-  pow(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '^', right, by, ignoring, group_left, group_right),
+  add(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '+', right, on, ignoring, group_left, group_right),
+  sub(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '-', right, on, ignoring, group_left, group_right),
+  mul(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '*', right, on, ignoring, group_left, group_right),
+  div(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '/', right, on, ignoring, group_left, group_right),
+  mod(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '%', right, on, ignoring, group_left, group_right),
+  pow(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '^', right, on, ignoring, group_left, group_right),
 };
 
 local comparisonOperators = {
-  equal(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '==', right, by, ignoring, group_left, group_right),
-  notEqual(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '!=', right, by, ignoring, group_left, group_right),
-  greaterThan(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '>', right, by, ignoring, group_left, group_right),
-  lessThan(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '<', right, by, ignoring, group_left, group_right),
-  greaterOrEqual(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '>=', right, by, ignoring, group_left, group_right),
-  lessOrEqual(left, right, by=[], ignoring=[], group_left=[], group_right=[]):
-    operator(left, '<=', right, by, ignoring, group_left, group_right),
+  equal(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '==', right, on, ignoring, group_left, group_right),
+  notEqual(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '!=', right, on, ignoring, group_left, group_right),
+  greaterThan(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '>', right, on, ignoring, group_left, group_right),
+  lessThan(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '<', right, on, ignoring, group_left, group_right),
+  greaterOrEqual(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '>=', right, on, ignoring, group_left, group_right),
+  lessOrEqual(left, right, on=[], ignoring=[], group_left=[], group_right=[]):
+    operator(left, '<=', right, on, ignoring, group_left, group_right),
 };
 
 local aggregationOperator(operator, parameter, expression, by, without) = {
