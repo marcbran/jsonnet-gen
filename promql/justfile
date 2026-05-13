@@ -1,14 +1,5 @@
 set fallback := true
 
-default:
-    @just --list
-
-release: test it
-    @just jsonnet-release promql
-
-test:
-    @jsonnet-kit test
-
 it:
     #!/usr/bin/env bash
     echo "Running integration tests..."

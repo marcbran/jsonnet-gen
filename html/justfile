@@ -1,21 +1,9 @@
 set fallback := true
 
-default:
-    @just --list
-
-pull:
+gen:
     #!/usr/bin/env bash
-    cd cmd/pull-elements
-    go run main.go "../../build"
-
-gen: pull
-    #!/usr/bin/env bash
-    jsonnet-kit -J ./template/vendor manifest "."
+    cd cmd/gen
+    go run . ../../gen
 
 test: gen
-    #!/usr/bin/env bash
-    jsonnet-kit test
-
-release: test
-    #!/usr/bin/env bash
-    jsonnet-kit release -r https://github.com/marcbran/jsonnet.git -b "html" -p "html" "./gen"
+    @jpoet test

@@ -1,13 +1,4 @@
 set fallback
 
-default:
-    @just --list
-
-release: test it
-    @just jsonnet-release grafonnet-layout
-
-test:
-    @jsonnet-kit test
-
 it:
     @just grafana-it

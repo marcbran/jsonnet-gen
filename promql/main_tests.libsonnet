@@ -127,6 +127,26 @@ local arithmeticOperatorTests = {
       input:: p.mul(p.add(prometheus.http_request_duration_seconds, prometheus.http_requests_total), prometheus.http_response_size_bytes),
       expected: '(prometheus_http_request_duration_seconds + prometheus_http_requests_total) * prometheus_http_response_size_bytes',
     },
+    {
+      name: 'on',
+      input:: p.mul(prometheus.http_requests_total, prometheus.http_requests_total, on=['instance']),
+      expected: 'prometheus_http_requests_total * on(instance) prometheus_http_requests_total',
+    },
+    {
+      name: 'ignoring',
+      input:: p.mul(prometheus.http_requests_total, prometheus.http_requests_total, ignoring=['instance']),
+      expected: 'prometheus_http_requests_total * ignoring(instance) prometheus_http_requests_total',
+    },
+    {
+      name: 'group_left',
+      input:: p.mul(prometheus.http_requests_total, prometheus.http_requests_total, on=['instance'], group_left=['handler']),
+      expected: 'prometheus_http_requests_total * on(instance) group_left(handler) prometheus_http_requests_total',
+    },
+    {
+      name: 'group_right',
+      input:: p.mul(prometheus.http_requests_total, prometheus.http_requests_total, on=['instance'], group_right=['handler']),
+      expected: 'prometheus_http_requests_total * on(instance) group_right(handler) prometheus_http_requests_total',
+    },
   ],
 };
 

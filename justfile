@@ -1,38 +1,18 @@
-default:
-    @just --list
-
-test:
-    @jsonnet-kit test
 
 [no-cd]
-jsonnet-release branch path="" source=".":
-    #!/usr/bin/env bash
-    branch="{{branch}}"
-    path="{{path}}"
-    source="{{source}}"
+test:
+    @jpoet test
 
-    if [[ "${path}" == "" ]]; then
-      path="${branch}"
-    fi
+[no-cd]
+it:
 
-    rm -rf release
-    git clone git@github.com:marcbran/jsonnet.git release
+[no-cd]
+build: test it
+    @jpoet pkg build
 
-    pushd release
-    git checkout "${branch}" || git checkout -b "${branch}"
-    git pull
-    popd
-
-    mkdir -p "release/${path}"
-    cp "${source}/main.libsonnet" "release/${path}/main.libsonnet"
-
-    pushd release
-    git add -A
-    git commit -m "release ${path}"
-    git push --set-upstream origin "${branch}"
-    popd
-
-    rm -rf release
+[no-cd]
+push: build
+    @jpoet pkg push
 
 [no-cd]
 grafana-it:
